@@ -1,0 +1,166 @@
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  @if (transfer(); as transfer) {
+    <div class="mb-8">
+      <button
+        routerLink="/transfers"
+        class="text-gray-600 hover:text-gray-900 flex items-center gap-2 mb-4"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Back to Transfers
+      </button>
+      <h1 class="text-3xl font-bold text-gray-900">Transfer Details</h1>
+    </div>
+
+    <!-- Status Banner -->
+    <div [class]="statusColor() + ' border-2 card mb-6'">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <svg
+            class="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              [attr.d]="statusIcon()"
+            />
+          </svg>
+          <div>
+            <p class="text-lg font-bold">{{ transfer.status }}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-3xl font-bold">
+            {{ transfer.amount | number: "1.2-2" }} MAD
+          </p>
+          <p class="text-sm opacity-75">
+            {{ isSender() ? "Sent" : "Received" }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transfer Info -->
+    <div class="card mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">
+        Transaction Information
+      </h2>
+
+      <div class="space-y-4">
+        <!-- Transfer ID -->
+        <div
+          class="flex justify-between items-start border-b border-gray-100 pb-3"
+        >
+          <span class="text-sm text-gray-500">Transfer ID</span>
+          <span class="text-sm font-mono text-gray-900">{{ transfer.id }}</span>
+        </div>
+
+        <!-- Direction -->
+        <div
+          class="flex justify-between items-start border-b border-gray-100 pb-3"
+        >
+          <span class="text-sm text-gray-500">Type</span>
+          <span class="text-sm font-medium text-gray-900">
+            @if (isSender()) {
+              <span class="text-danger-600">⬆ Outgoing</span>
+            } @else {
+              <span class="text-success-600">⬇ Incoming</span>
+            }
+          </span>
+        </div>
+
+        <!-- Sender -->
+        <div
+          class="flex justify-between items-start border-b border-gray-100 pb-3"
+        >
+          <span class="text-sm text-gray-500">From</span>
+          <span class="text-sm font-medium text-gray-900">
+            {{ isSender() ? "You" : transfer.senderId }}
+          </span>
+        </div>
+
+        <!-- Recipient -->
+        <div
+          class="flex justify-between items-start border-b border-gray-100 pb-3"
+        >
+          <span class="text-sm text-gray-500">To</span>
+          <span class="text-sm font-medium text-gray-900">
+            {{ isSender() ? transfer.receiverId : "You" }}
+          </span>
+        </div>
+
+        <!-- Amount -->
+        <div
+          class="flex justify-between items-start border-b border-gray-100 pb-3"
+        >
+          <span class="text-sm text-gray-500">Amount</span>
+          <span class="text-sm font-bold text-gray-900">
+            {{ transfer.amount | number: "1.2-2" }} MAD
+          </span>
+        </div>
+
+        <!-- Failure Reason -->
+        @if (transfer.reason) {
+          <div
+            class="flex justify-between items-start border-b border-gray-100 pb-3"
+          >
+            <span class="text-sm text-gray-500">Failure Reason</span>
+            <span class="text-sm text-danger-600 text-right max-w-md">
+              {{ transfer.reason }}
+            </span>
+          </div>
+        }
+
+        <!-- Created At -->
+        <div
+          class="flex justify-between items-start border-b border-gray-100 pb-3"
+        >
+          <span class="text-sm text-gray-500">Created</span>
+          <span class="text-sm text-gray-900">
+            {{ transfer.createdAt | date: "medium" }}
+          </span>
+        </div>
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="card bg-danger-50 border-danger-200">
+      <div class="flex items-center gap-3">
+        <svg
+          class="w-5 h-5 text-danger-600 flex-shrink-0"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <div>
+          <p class="font-semibold text-danger-800">Error</p>
+          <p class="text-sm text-danger-700">{{ error() }}</p>
+        </div>
+      </div>
+      <button routerLink="/transfers" class="mt-4 btn btn-secondary">
+        Back to Transfers
+      </button>
+    </div>
+  } @else {
+    <app-loading-spinner />
+  }
+</div>

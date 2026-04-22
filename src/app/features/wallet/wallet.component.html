@@ -1,0 +1,168 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">My Wallet</h1>
+    <p class="mt-2 text-gray-600">
+      Manage your balance and view wallet details
+    </p>
+  </div>
+
+  @if (isLoading()) {
+    <app-loading-spinner />
+  } @else {
+    @if (wallet()) {
+      <div class="space-y-6">
+        <!-- Balance Card -->
+        <app-balance-card
+          [balance]="wallet()!.balance"
+          [showRealTimeIndicator]="true"
+        />
+
+        <!-- Wallet Details Card -->
+        <div class="card">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Wallet Details
+          </h2>
+
+          <div class="space-y-4">
+            <div class="flex justify-between py-3 border-b border-gray-200">
+              <span class="text-gray-600">Wallet ID</span>
+              <span class="font-mono text-sm text-gray-900">{{
+                wallet()!.userId
+              }}</span>
+            </div>
+
+            <div class="flex justify-between py-3 border-b border-gray-200">
+              <span class="text-gray-600">Status</span>
+              <span class="badge badge-success">Active</span>
+            </div>
+
+            <div class="flex justify-between py-3">
+              <span class="text-gray-600">Real-time Updates</span>
+              <span class="flex items-center text-success-600">
+                <span class="relative flex h-3 w-3 mr-2">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-400 opacity-75"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-3 w-3 bg-success-500"
+                  ></span>
+                </span>
+                Connected
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Quick Actions
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              routerLink="/transfers/new"
+              class="flex items-center justify-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all group"
+            >
+              <svg
+                class="w-6 h-6 text-primary-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <span
+                class="font-medium text-gray-900 group-hover:text-primary-700"
+              >
+                Send Money
+              </span>
+            </button>
+
+            <button
+              routerLink="/transfers"
+              class="flex items-center justify-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all group"
+            >
+              <svg
+                class="w-6 h-6 text-primary-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+              <span
+                class="font-medium text-gray-900 group-hover:text-primary-700"
+              >
+                Transaction History
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else if (!hasWallet()) {
+      <!-- No Wallet State -->
+      <div class="card text-center py-12">
+        <svg
+          class="mx-auto h-16 w-16 text-gray-400 mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+          />
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Wallet Found</h3>
+        <p class="text-gray-600 mb-6">
+          You don't have a wallet yet. Create one to start transferring money.
+        </p>
+        <button
+          (click)="createWallet()"
+          [disabled]="isCreating()"
+          class="btn btn-primary disabled:opacity-50"
+        >
+          @if (isCreating()) {
+            <span class="flex items-center justify-center">
+              <svg
+                class="animate-spin -ml-1 mr-3 h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Creating Wallet...
+            </span>
+          } @else {
+            Create Wallet
+          }
+        </button>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,210 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-2 text-gray-600">
+      Your financial overview.
+    </p>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Balance Card -->
+      <div class="lg:col-span-2">
+        @if (wallet()) {
+          <app-balance-card
+            [balance]="wallet()!.balance"
+            [showRealTimeIndicator]="true"
+          />
+        }
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          <button
+            routerLink="/transfers/new"
+            class="card hover:shadow-md transition-all group"
+          >
+            <div class="flex items-center space-x-4">
+              <div
+                class="bg-primary-50 p-3 rounded-full group-hover:bg-primary-100 transition-colors"
+              >
+                <svg
+                  class="w-6 h-6 text-primary-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Send Money</p>
+                <p class="text-sm text-gray-500">Transfer to another user</p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            routerLink="/transfers"
+            class="card hover:shadow-md transition-all group"
+          >
+            <div class="flex items-center space-x-4">
+              <div
+                class="bg-success-50 p-3 rounded-full group-hover:bg-success-100 transition-colors"
+              >
+                <svg
+                  class="w-6 h-6 text-success-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">View History</p>
+                <p class="text-sm text-gray-500">All transactions</p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="space-y-4">
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Total Sent</p>
+              <p class="text-2xl font-bold text-gray-900 mt-1">
+                {{ totalSent() | number: "1.2-2" }} MAD
+              </p>
+            </div>
+            <div class="bg-danger-50 p-3 rounded-full">
+              <svg
+                class="w-6 h-6 text-danger-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 11l5-5m0 0l5 5m-5-5v12"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Total Received</p>
+              <p class="text-2xl font-bold text-gray-900 mt-1">
+                {{ totalReceived() | number: "1.2-2" }} MAD
+              </p>
+            </div>
+            <div class="bg-success-50 p-3 rounded-full">
+              <svg
+                class="w-6 h-6 text-success-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 13l-5 5m0 0l-5-5m5 5V6"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Transactions</p>
+              <p class="text-2xl font-bold text-gray-900 mt-1">
+                {{ totalCount() }}
+              </p>
+            </div>
+            <div class="bg-primary-50 p-3 rounded-full">
+              <svg
+                class="w-6 h-6 text-primary-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-900"> Latest Transactions </h2>
+        <a
+          routerLink="/transfers"
+          class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+        >
+          View all
+        </a>
+      </div>
+      @if (recentTransfers().length > 0) {
+        <div class="space-y-3">
+          @for (transfer of recentTransfers(); track transfer.id) {
+            <app-transaction-card
+              [transfer]="transfer"
+              [currentUserId]="authService.user()?.id!"
+            />
+          }
+        </div>
+      } @else {
+        <div class="card text-center py-12">
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            />
+          </svg>
+          <p class="mt-4 text-gray-500">No transactions yet</p>
+          <button routerLink="/transfers/new" class="mt-4 btn btn-primary">
+            Send your first transfer
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>

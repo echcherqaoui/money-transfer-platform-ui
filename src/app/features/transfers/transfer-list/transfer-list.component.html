@@ -1,0 +1,108 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Transfers</h1>
+      <p class="mt-2 text-gray-600">View all your transfer history</p>
+    </div>
+    <button routerLink="/transfers/new" class="btn btn-primary">
+      <svg
+        class="w-5 h-5 mr-2 inline"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+      New Transfer
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-6">
+    <div class="flex flex-wrap gap-2">
+      <button
+        (click)="setFilter(null)"
+        [class.bg-primary-100]="filterStatus === null"
+        [class.text-primary-700]="filterStatus === null"
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-100"
+      >
+        All
+      </button>
+      @for (status of statuses; track status) {
+        <button
+          (click)="setFilter(status)"
+          [class.bg-primary-100]="filterStatus() === status"
+          [class.text-primary-700]="filterStatus() === status"
+          class="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-100"
+        >
+          {{ status }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <app-loading-spinner />
+  } @else {
+    @if (allTransfers().length > 0) {
+      <div class="space-y-3">
+        @for (transfer of allTransfers(); track transfer.id) {
+          <app-transaction-card
+            [filterStatus]="filterStatus()"
+            [transfer]="transfer"
+            [currentUserId]="authService.user()!.id"
+          />
+        }
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        @if (canLoadMore()) {
+          <button
+            (click)="loadMore()"
+            class="btn btn-secondary px-8 py-3 flex items-center gap-2"
+          >
+            @if (isLoadingMore()) {
+              <app-loading-spinner size="small" />
+            }
+            Load More
+          </button>
+        } @else if (!hasMore() && allTransfers().length > 0) {
+          <p class="text-sm text-gray-500 italic py-4">
+            You've reached the end of your transfers
+          </p>
+        }
+      </div>
+    } @else {
+      <div class="card text-center py-12">
+        <svg
+          class="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
+        </svg>
+        <p class="mt-4 text-gray-500">
+          {{
+            filterStatus()
+              ? "No " + filterStatus()?.toLowerCase() + " transfers"
+              : "No transfers yet"
+          }}
+        </p>
+        <button routerLink="/transfers/new" class="mt-4 btn btn-primary">
+          Send your first transfer
+        </button>
+      </div>
+    }
+  }
+</div>

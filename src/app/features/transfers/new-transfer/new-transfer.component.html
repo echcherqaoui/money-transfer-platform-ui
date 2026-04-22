@@ -1,0 +1,148 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Send Money</h1>
+    <p class="mt-2 text-gray-600">Transfer money to another user instantly</p>
+  </div>
+
+  <div class="card">
+    <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
+      <div class="space-y-6">
+        <div>
+          <label
+            for="receiverId"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Recipient User ID
+          </label>
+          <input
+            id="receiverId"
+            type="text"
+            formControlName="receiverId"
+            (input)="onInputChange()"
+            class="input mt-1"
+            [class.border-danger-500]="
+              isFieldInvalid('receiverId') || walletNotFound()
+            "
+            placeholder="Enter recipient's user ID"
+          />
+          @if (isFieldInvalid("receiverId")) {
+            <p class="mt-1 text-sm text-danger-600">
+              Valid recipient ID is required
+            </p>
+          } @else if (walletNotFound()) {
+            <p class="mt-1 text-sm text-danger-600 font-bold">
+              Error: Account not found in system
+            </p>
+          }
+          <p class="mt-1 text-xs text-gray-500">
+            Must be a valid UUID format (e.g.,
+            123e4567-e89b-12d3-a456-426614174000)
+          </p>
+        </div>
+
+        <div>
+          <label for="amount" class="block text-sm font-medium text-gray-700">
+            Amount (MAD)
+          </label>
+          <div class="mt-1 relative rounded-md shadow-sm">
+            <div
+              class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none"
+            >
+              <span class="text-gray-500 sm:text-sm">DH</span>
+            </div>
+            <input
+              id="amount"
+              type="number"
+              min="0"
+              step="0.1"
+              formControlName="amount"
+              class="input pl-7"
+              [class.border-danger-500]="isFieldInvalid('amount')"
+              placeholder="0.00"
+            />
+          </div>
+          @if (isFieldInvalid("amount")) {
+            <p class="mt-1 text-sm text-danger-600">
+              Amount must be at least 1 MAD
+            </p>
+          }
+        </div>
+
+        <!-- Summary -->
+        @if (
+          transferForm.get("amount")?.value && transferForm.get("amount")?.valid
+        ) {
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex justify-between text-sm mb-2">
+              <span class="text-gray-600">Amount:</span>
+              <span class="font-medium"
+                >{{
+                  transferForm.get("amount")?.value | number: "1.2-2"
+                }}
+                DH</span
+              >
+            </div>
+            <div class="flex justify-between text-sm mb-2">
+              <span class="text-gray-600">Fee:</span>
+              <span class="font-medium text-success-600">0.00 DH</span>
+            </div>
+            <div class="border-t border-gray-200 pt-2 mt-2">
+              <div class="flex justify-between">
+                <span class="font-semibold">Total:</span>
+                <span class="font-bold text-lg"
+                  >{{
+                    transferForm.get("amount")?.value | number: "1.2-2"
+                  }}
+                  DH</span
+                >
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Actions -->
+        <div class="flex space-x-4">
+          <button
+            type="submit"
+            [disabled]="isLoading() || transferForm.invalid ||  walletNotFound()"
+            class="flex-1 btn btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            @if (isLoading()) {
+              <span class="flex items-center justify-center">
+                <svg
+                  class="animate-spin -ml-1 mr-3 h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Processing...
+              </span>
+            } @else {
+              Send Money
+            }
+          </button>
+          <button
+            type="button"
+            (click)="cancel()"
+            class="btn btn-secondary py-3"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

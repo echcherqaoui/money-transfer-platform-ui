@@ -1,0 +1,172 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8 flex items-center space-x-4">
+    <div class="p-3 bg-indigo-100 rounded-lg">
+      <svg
+        class="w-8 h-8 text-indigo-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"
+        />
+      </svg>
+    </div>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Administrative Deposit</h1>
+      <p class="mt-1 text-gray-600">
+        Manual credit adjustment for user wallets
+      </p>
+    </div>
+  </div>
+
+  <div class="card border-t-4 border-indigo-500">
+    <form [formGroup]="depositForm" (ngSubmit)="onSubmit()">
+      <div class="space-y-6">
+        <div>
+          <label
+            for="targetUserId"
+            class="block text-sm font-medium text-gray-700"
+            >Recipient User ID</label
+          >
+          <input
+            id="targetUserId"
+            type="text"
+            formControlName="targetUserId"
+            (input)="onInputChange()"
+            class="input mt-1 font-mono text-sm bg-gray-50 focus:bg-white"
+            [class.border-danger-500]="
+              isFieldInvalid('targetUserId') || walletNotFound()
+            "
+            placeholder="00000000-0000-0000-0000-000000000000"
+          />
+          @if (isFieldInvalid("targetUserId")) {
+            <p class="mt-1 text-sm text-danger-600">
+              Valid UUID format is required
+            </p>
+          } @else if (walletNotFound()) {
+            <p class="mt-1 text-sm text-danger-600 font-bold">
+              Error: Account not found in system
+            </p>
+          }
+        </div>
+
+        <div>
+          <label for="amount" class="block text-sm font-medium text-gray-700"
+            >Deposit Amount (MAD)</label
+          >
+          <div class="mt-1 relative rounded-md shadow-sm">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <span class="text-gray-500 sm:text-sm">DH</span>
+            </div>
+            <input
+              id="amount"
+              type="number"
+              min="0"
+              formControlName="amount"
+              class="input pl-10"
+              [class.border-danger-500]="isFieldInvalid('amount')"
+              placeholder="0.00"
+            />
+          </div>
+        </div>
+
+        @if (
+          depositForm.get("amount")?.valid && depositForm.get("amount")?.value
+        ) {
+          <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+            <div class="flex justify-between items-center">
+              <div>
+                <span
+                  class="block text-xs font-semibold text-indigo-600 uppercase tracking-wider"
+                  >Adjustment Type</span
+                >
+                <span class="text-indigo-900 font-bold">MANUAL_CREDIT</span>
+              </div>
+              <div class="text-right">
+                <span
+                  class="block text-xs font-semibold text-indigo-600 uppercase tracking-wider"
+                  >Total to Add</span
+                >
+                <span class="text-2xl font-black text-indigo-900"
+                  >+{{
+                    depositForm.get("amount")?.value | number: "1.2-2"
+                  }}
+                  DH</span
+                >
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="flex p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <svg
+            class="h-5 w-5 text-amber-400 mr-3"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <div class="text-sm text-amber-700">
+            <p class="font-bold">Attention:</p>
+            <p>
+              This action will immediately credit the user. Ensure the UUID
+              corresponds to the correct account.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-row-reverse gap-4">
+          <button
+            type="submit"
+            [disabled]="isLoading() || depositForm.invalid || walletNotFound()"
+            class="flex-1 btn bg-indigo-600 hover:bg-indigo-700 text-white py-3 shadow-md transition-all active:scale-95 disabled:opacity-50"
+          >
+            @if (isLoading()) {
+              <span class="flex items-center justify-center">
+                <svg
+                  class="animate-spin h-5 w-5 mr-3 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Confirming...
+              </span>
+            } @else {
+              Execute Credit Adjustment
+            }
+          </button>
+          <button
+            type="button"
+            (click)="cancel()"
+            class="flex-1 btn btn-secondary py-3"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

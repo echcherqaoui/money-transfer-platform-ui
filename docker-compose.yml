@@ -1,0 +1,13 @@
+services:
+  frontend-app:
+    build: .
+    container_name: frontend-mt-platform
+    ports:
+      - "80:80"
+    networks:
+      - money-transfer-net
+    restart: unless-stopped
+
+networks:
+  money-transfer-net:
+    external: true
